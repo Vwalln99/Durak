@@ -11,6 +11,6 @@ export default function Card({ card, onClick }:CardProps) {
       <div className="card-rank">{card.rank}</div>
     </div>
   );
-};
+}
 
 

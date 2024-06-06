@@ -16,22 +16,25 @@ export default function Game(){
   useEffect(() => {
     durak.startGame();
     setDurak(durak);
-  }, []);
+  }, [durak]);
 
   const handleAttack = (cardIndex: number) => {
+    console.log('clicked on attack with index', cardIndex);
     const attacker = durak.players[currentAttacker];
-    const card = attacker.hand[cardIndex];
+    console.log(attacker);
+    /*const card = attacker.hand[cardIndex];
     if (durak.isValidAttack(card)) {
         durak.attack(cardIndex, currentDefender);
       setTable([...table, { attackerCard: card, defenderCard: null }]);
       attacker.hand.splice(cardIndex, 1);
       setCurrentDefender(currentDefender);
       setCurrentAttacker((currentAttacker + 1) % durak.players.length);
-    }
+    }*/
   };
 
   const handleDefend = (cardIndex: number) => {
-    const defender = durak.players[currentDefender];
+    console.log('clicked on defend with index', cardIndex);
+   /* const defender = durak.players[currentDefender];
     const card = defender.hand[cardIndex];
     const lastAttack = table[table.length - 1];
     if (lastAttack && durak.isValidDefend(lastAttack.attackerCard, card)) {
@@ -40,7 +43,7 @@ export default function Game(){
       defender.hand.splice(cardIndex, 1);
       setTable([...table.slice(0, -1), lastAttack]);
       setCurrentAttacker((currentAttacker + 1) % durak.players.length);
-    }
+    }*/
   };
 
   return (
@@ -56,12 +59,12 @@ export default function Game(){
         />
       ))}
       <div className="table">
-        {table.map((turn, index) => (
+        {/*{table.map((turn, index) => (
           <div key={index} className="turn">
             <Card card={turn.attackerCard} />
             {turn.defenderCard && <Card card={turn.defenderCard} />}
           </div>
-        ))}
+        ))}*/}
       </div>
       <Deck cards={durak.players[currentAttacker].hand} onCardClick={handleAttack} />
       <Deck cards={durak.players[currentDefender].hand} onCardClick={handleDefend} />
