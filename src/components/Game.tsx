@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react';
 import Player from './Player';
-import Durak, {Card as CardType} from '../Durak';
+import Durak from '../services/Durak';
+import { Card as CardType } from '../models/Card';
 import Card from './Card';
-import Deck from './Deck';
+import './Game.css';
 
-export default function Game(){
+export default function Game (){
   const [durak, setDurak] = useState(() => new Durak([
     { name: 'Player 1', hand: [] },
     { name: 'Player 2', hand: [] }
   ]));
-  const [currentAttacker, setCurrentAttacker] = useState(durak.attackerIndex);
-  const [currentDefender, setCurrentDefender] = useState(durak.defenderIndex);
+  const [currentAttacker, setCurrentAttacker] = useState(0);
+  const [currentDefender, setCurrentDefender] = useState(1);
   const [table, setTable] = useState<{ attackerCard: CardType, defenderCard: CardType | null }[]>([]);
+  const [gameMessage, setGameMessage] = useState('');
 
   useEffect(() => {
     durak.startGame();
@@ -19,32 +21,40 @@ export default function Game(){
   }, []);
 
   const handleAttack = (cardIndex: number) => {
-    const attacker = durak.players[currentAttacker];
-    const card = attacker.hand[cardIndex];
-    if (durak.isValidAttack(card)) {
-        durak.attack(cardIndex, currentDefender);
-      setTable([...table, { attackerCard: card, defenderCard: null }]);
-      attacker.hand.splice(cardIndex, 1);
-      setCurrentDefender(currentDefender);
-      setCurrentAttacker((currentAttacker + 1) % durak.players.length);
+    const attackCard = durak.attack(currentAttacker, cardIndex);
+    if (attackCard) {
+      setTable([...table, { attackerCard: attackCard, defenderCard: null }]);
+    } else {
+      setGameMessage('Angriff fehlgeschlagen.');
     }
   };
 
   const handleDefend = (cardIndex: number) => {
-    const defender = durak.players[currentDefender];
-    const card = defender.hand[cardIndex];
     const lastAttack = table[table.length - 1];
-    if (lastAttack && durak.isValidDefend(lastAttack.attackerCard, card)) {
-        durak.defend(cardIndex, currentAttacker, currentDefender);
-      lastAttack.defenderCard = card;
-      defender.hand.splice(cardIndex, 1);
-      setTable([...table.slice(0, -1), lastAttack]);
-      setCurrentAttacker((currentAttacker + 1) % durak.players.length);
+    if (!lastAttack) return;
+
+    const defendCard = durak.defend(currentDefender, lastAttack.attackerCard, cardIndex);
+    if (defendCard) {
+      lastAttack.defenderCard = defendCard;
+      setTable([...table]);
+    } else {
+      setGameMessage('Verteidigung fehlgeschlagen. Karte aufgenommen.');
+      durak.players[currentDefender].hand.push(lastAttack.attackerCard);
+      setTable(table.slice(0, -1));
     }
+  };
+
+  const endTurn = () => {
+    setCurrentAttacker((currentAttacker + 1) % durak.players.length);
+    setCurrentDefender((currentDefender + 1) % durak.players.length);
+    setTable([]);
+    setGameMessage('');
   };
 
   return (
     <div className="game">
+      <h1>Durak</h1>
+      {gameMessage && <p>{gameMessage}</p>}
       {durak.players.map((player, index) => (
         <Player
           key={index}
@@ -63,9 +73,9 @@ export default function Game(){
           </div>
         ))}
       </div>
-      <Deck cards={durak.players[currentAttacker].hand} onCardClick={handleAttack} />
-      <Deck cards={durak.players[currentDefender].hand} onCardClick={handleDefend} />
+      <button onClick={endTurn}>Turn beenden</button>
     </div>
   );
 };
+
 

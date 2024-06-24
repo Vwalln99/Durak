@@ -5,11 +5,10 @@ function App() {
  
 
   return (
-    <>
-      <h1>Durak Game</h1>
+    <div className="app">
       <Game />
-    </>
+    </div>
   )
 }
 
-export default App
+export default App;
