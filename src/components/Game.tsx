@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import Player from './Player';
 import Durak from '../services/Durak';
 import { Card as CardType } from '../models/Card';
-import Card from './Card';
 import './Game.css';
 
 export default function Game (){
