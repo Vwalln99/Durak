@@ -12,6 +12,6 @@ export default function Card ({ card, onClick } : CardProps ){
       {card.rank} {card.suit}
     </div>
   );
-};
+}
 
 

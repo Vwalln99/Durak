@@ -18,7 +18,7 @@ export default function Game (){
   useEffect(() => {
     durak.startGame();
     setDurak(durak);
-  }, []);
+  }, [durak]);
 
   const handleAttack = (cardIndex: number) => {
     const attackCard = durak.attack(currentAttacker, cardIndex);
@@ -66,12 +66,12 @@ export default function Game (){
         />
       ))}
       <div className="table">
-        {table.map((turn, index) => (
+        {/*{table.map((turn, index) => (
           <div key={index} className="turn">
             <Card card={turn.attackerCard} />
             {turn.defenderCard && <Card card={turn.defenderCard} />}
           </div>
-        ))}
+        ))}*/}
       </div>
       <button onClick={endTurn}>Turn beenden</button>
     </div>
